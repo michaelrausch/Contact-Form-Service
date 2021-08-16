@@ -1,0 +1,11 @@
+destinations:
+  - id: 
+    name: 
+    email: 
+
+mailjet: 
+  privatekey: 
+  publickey: 
+  from: 
+  name: 
+  subject: 
