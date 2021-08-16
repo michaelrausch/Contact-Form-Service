@@ -11,7 +11,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	lib "github.com/michaelrausch/Contact-Form-Service/lib"
+	"github.com/michaelrausch/Contact-Form-Service/lib"
 )
 
 func main() {
