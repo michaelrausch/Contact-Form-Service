@@ -28,4 +28,4 @@ EXPOSE 8080
 
 USER nonroot:nonroot
 
-ENTRYPOINT ["/api"]
+CMD ["/api", "-c", "config.yaml"]

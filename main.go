@@ -9,12 +9,18 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/michaelrausch/Contact-Form-Service/lib"
 )
 
 func main() {
+	if len(os.Args) != 3 || os.Args[1] != "-c" {
+		fmt.Println("Usage: api -c config.yaml")
+		return
+	}
+
 	r := mux.NewRouter()
 	r.HandleFunc("/", ContactHandler).Methods("POST")
 
@@ -34,8 +40,9 @@ func main() {
 // }
 func ContactHandler(w http.ResponseWriter, r *http.Request) {
 	var m lib.ContactMessage
+	configFilePath := os.Args[2]
 
-	config, err := lib.ReadConf("conf.yaml")
+	config, err := lib.ReadConf(configFilePath)
 
 	// There was an error loading or parsing config.yaml
 	// Return an internal server error
