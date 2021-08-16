@@ -1,3 +1,7 @@
+// Copyright 2021 Michael Rausch. All Rights Reserved
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package main
 
 import (
@@ -7,6 +11,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	lib "github.com/michaelrausch/Contact-Form-Service/lib"
 )
 
 func main() {
@@ -16,11 +21,24 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
 
+// Handler for contact form messages
+//
+// Route: /
+// Method: POST
+// Example Request:
+// {
+//    "Name": "Joe Bloggs"
+//    "Email": "example@email.com"
+//    "Message": "Hello, World!"
+//    "Destination": "personalwebsite"
+// }
 func ContactHandler(w http.ResponseWriter, r *http.Request) {
-	var m ContactMessage
+	var m lib.ContactMessage
 
-	config, err := readConf("conf.yaml")
+	config, err := lib.ReadConf("conf.yaml")
 
+	// There was an error loading or parsing config.yaml
+	// Return an internal server error
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -30,6 +48,7 @@ func ContactHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewDecoder(r.Body).Decode(&m)
 
+	// Failed to decode body as JSON, or validation failed
 	if err != nil || m.Validate() == false {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "Bad Request")
@@ -38,19 +57,21 @@ func ContactHandler(w http.ResponseWriter, r *http.Request) {
 
 	err, dest := config.GetDestinationById(m.Destination)
 
+	// Failed to find a destination with the given ID
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "Bad Request")
 		return
 	}
 
-	mail := MailMessage{
-		dest:    dest,
-		message: m,
+	mail := lib.MailMessage{
+		Dest:    dest,
+		Message: m,
 	}
 
 	err = mail.Send(config.Mailjet)
 
+	// There was an error sending the message
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Println(err)

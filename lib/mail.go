@@ -1,18 +1,23 @@
-package main
+// Copyright 2021 Michael Rausch. All Rights Reserved
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+package lib
 
 import (
 	mailjet "github.com/mailjet/mailjet-apiv3-go"
 )
 
 type MailMessage struct {
-	message ContactMessage
-	dest    Destination
+	Message ContactMessage
+	Dest    Destination
 }
 
+// Get the message body formatted as an HTML string
 func (msg *MailMessage) GetHtmlPart() string {
-	messageFrom := msg.message.Email
-	messageFromName := msg.message.Name
-	message := msg.message.Message
+	messageFrom := msg.Message.Email
+	messageFromName := msg.Message.Name
+	message := msg.Message.Message
 
 	body := "<b>New contact form message from " + messageFromName + " (" + messageFrom + ")" + "</b>"
 	body += "<br/><br/>"
@@ -22,10 +27,11 @@ func (msg *MailMessage) GetHtmlPart() string {
 	return body
 }
 
+// Get the message body formatted as a plain-text string
 func (msg *MailMessage) GetTextPart() string {
-	messageFrom := msg.message.Email
-	messageFromName := msg.message.Name
-	message := msg.message.Message
+	messageFrom := msg.Message.Email
+	messageFromName := msg.Message.Name
+	message := msg.Message.Message
 
 	body := "New Contact Form Message From " + messageFromName + " (" + messageFrom + ")" + "\n\n"
 	body += message
@@ -34,8 +40,12 @@ func (msg *MailMessage) GetTextPart() string {
 	return body
 }
 
+// Send the message
+//
+// config: The MailJet configuration, this should include the API keys
+//         See the definition of MailjetConfig in mail.go
+//
 func (msg *MailMessage) Send(config MailjetConfig) error {
-
 	mailjetClient := mailjet.NewMailjetClient(config.Publickey, config.Privatekey)
 
 	messageInfo := []mailjet.InfoMessagesV31{
@@ -45,13 +55,13 @@ func (msg *MailMessage) Send(config MailjetConfig) error {
 				Name:  config.Name,
 			},
 			ReplyTo: &mailjet.RecipientV31{
-				Email: msg.message.Email,
-				Name:  msg.message.Name,
+				Email: msg.Message.Email,
+				Name:  msg.Message.Name,
 			},
 			To: &mailjet.RecipientsV31{
 				mailjet.RecipientV31{
-					Email: msg.dest.Email,
-					Name:  msg.dest.Name,
+					Email: msg.Dest.Email,
+					Name:  msg.Dest.Name,
 				},
 			},
 			Subject:  config.Subject,
