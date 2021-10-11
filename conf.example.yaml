@@ -1,3 +1,5 @@
+serverid: 
+
 destinations:
   - id: 
     name: 
@@ -9,3 +11,7 @@ mailjet:
   from: 
   name: 
   subject: 
+
+slack:
+  apikey: 
+  channelid: 

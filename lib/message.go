@@ -7,6 +7,8 @@ package lib
 import (
 	"regexp"
 	"strings"
+
+	"github.com/microcosm-cc/bluemonday"
 )
 
 type ContactMessage struct {
@@ -37,4 +39,12 @@ func (msg *ContactMessage) Validate() bool {
 	}
 
 	return true
+}
+
+// Sanitize body
+func (msg *ContactMessage) Sanitize() {
+	p := bluemonday.StrictPolicy()
+
+	sanitized := p.Sanitize(msg.Message)
+	msg.Message = sanitized
 }

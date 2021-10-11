@@ -25,9 +25,16 @@ type MailjetConfig struct {
 	Subject    string // This is the subject that all messages will have
 }
 
+type SlackConfig struct {
+	ApiKey    string
+	ChannelID string
+}
+
 type ConfigFile struct {
+	ServerID     string
 	Destinations []Destination
 	Mailjet      MailjetConfig
+	Slack        SlackConfig
 }
 
 // Gets the destination for a given ID
