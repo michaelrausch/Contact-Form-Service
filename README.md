@@ -24,6 +24,10 @@ mailjet:
   from: noreply@example.com
   name: Contact Form
   subject: Contact Form Message
+  
+slack:
+  apikey: demoapikey
+  channelid: chanid
 ```
 
 ## Available as a Docker image
