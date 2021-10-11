@@ -10,14 +10,34 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/michaelrausch/Contact-Form-Service/lib"
 	"github.com/michaelrausch/Contact-Form-Service/routes"
 )
+
+func sendSlackServerUpdate(config lib.ConfigFile) {
+	slackBot := lib.SlackBot{
+		ApiToken:  config.Slack.ApiKey,
+		ChannelID: config.Slack.ChannelID,
+	}
+
+	slackBot.SendStatusMessage("INFO", config.ServerID, "Server Online")
+}
 
 func main() {
 	if len(os.Args) != 3 || os.Args[1] != "-c" {
 		fmt.Println("Usage: api -c config.yaml")
 		return
 	}
+
+	configFilePath := os.Args[2]
+	config, err := lib.ReadConf(configFilePath)
+
+	if err != nil {
+		fmt.Println("Failed To Read Config")
+		return
+	}
+
+	go sendSlackServerUpdate(*config)
 
 	app := fiber.New()
 
